@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net461</TargetFramework>
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\engenious\engenious.csproj" Condition="Exists('..\engenious\engenious.csproj')"/>
+        
+        <PackageReference Include="engenious" Version="*" Condition="!Exists('..\engenious\engenious.csproj')"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Remove="Content\simple\simple.cs"/>
+        <None Include="Content\simple\simple.cs"/>
+        <EngeniousContentReference Include="Content\Content.ecp"/>
+    </ItemGroup>
+    <Import Project="targets\engenious.VERSION\build\engenious.targets"/>
+</Project>

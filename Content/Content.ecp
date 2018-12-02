@@ -2,7 +2,7 @@
 <Content>
   <Name>Sample</Name>
   <Configuration>Debug</Configuration>
-  <OutputDir>/home/julian/Projects/engenious/Sample/Content/bin/Debug</OutputDir>
+  <OutputDir>bin/$(Configuration)</OutputDir>
   <Contents>
     <ContentFile>
       <Name>brick.jpg</Name>
