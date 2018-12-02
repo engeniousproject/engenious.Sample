@@ -8,11 +8,14 @@
         <ProjectReference Include="..\engenious\engenious.csproj" Condition="Exists('..\engenious\engenious.csproj')"/>
         
         <PackageReference Include="engenious" Version="*" Condition="!Exists('..\engenious\engenious.csproj')"/>
+
+        <ProjectReference Include="..\engenious.ContentTool\engenious.ContentTool.csproj" Condition="Exists('..\engenious.ContentTool\engenious.ContentTool.csproj')" PrivateAssets="all"/>
+        <PackageReference Include="engenious.ContentTool" Version="*" Condition="!Exists('..\engenious.ContentTool\engenious.ContentTool.csproj')"/>
     </ItemGroup>
     <ItemGroup>
         <Compile Remove="Content\simple\simple.cs"/>
         <None Include="Content\simple\simple.cs"/>
         <EngeniousContentReference Include="Content\Content.ecp"/>
     </ItemGroup>
-    <Import Project="targets\engenious.VERSION\build\engenious.targets"/>
+    <Import Project="targets\engenious.VERSION\build\engenious.targets" Condition="Exists('..\engenious.ContentTool\engenious.ContentTool.csproj')"/>
 </Project>
