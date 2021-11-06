@@ -8,8 +8,32 @@
 
             </Shader>
             <Attributes>
-                <attribute name="inputData">Position</attribute>
-              <attribute name="inputData2">Normal</attribute>
+              <attribute name="position">Position</attribute>
+              <attribute name="normal">Normal</attribute>
+              <attribute name="texCoord">TextureCoordinate</attribute>
+            </Attributes>
+            <Materials>
+                <Material name="Simple">
+                    <binding name="Texture">Albedo</binding>
+                    <binding name="metallic">Metallic</binding>
+                    <binding name="roughness">Roughness</binding>
+                    <binding name="ao">AmbientOcclusion</binding>
+                </Material>
+            </Materials>
+        </Pass>
+    </Technique>
+    <Technique name="Test">
+        <Pass name="MainPass">
+            <Shader type="PixelShader" filename="simple/test.ps">
+
+            </Shader>
+            <Shader type="VertexShader" filename="simple/simple.vs">
+
+            </Shader>
+            <Attributes>
+              <attribute name="position">Position</attribute>
+              <attribute name="normal">Normal</attribute>
+              <attribute name="texCoord">TextureCoordinate</attribute>
             </Attributes>
         </Pass>
     </Technique>

@@ -4,6 +4,7 @@
     <!-- Add EngeniousContentReference to item type selection in Visual Studio -->
     <ItemGroup>
         <AvailableItemName Include="EngeniousContentReference"/>
+        <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="SourceItemGroup"/>
     </ItemGroup>
 
     <!-- Get all Engenious Game Content References and store them in a list -->
@@ -16,7 +17,7 @@
         <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
     </PropertyGroup>
 
-    <Target Name="Prepare">
+    <Target Name="PrepareEngeniousContent">
         <PropertyGroup>
             <ContentRootDirectory>Content</ContentRootDirectory>
         </PropertyGroup>
@@ -33,60 +34,68 @@
             <ContentRootDirectory>Content</ContentRootDirectory>
 
 
-            <EngeniousContentBuilderExe Condition="'$(EngeniousContentBuilderExe)' == ''">$(MSBuildThisFileDirectory)..\..\..\..\engenious.ContentTool\bin\$(Configuration)\$(TargetFramework)\engenious.ContentTool.exe</EngeniousContentBuilderExe>
+            <EngeniousContentBuilderExe Condition="'$(EngeniousContentBuilderExe)' == ''">$(MSBuildThisFileDirectory)..\..\..\..\engenious.ContentTool\bin\$(Configuration)\$(TargetFramework)\engenious.ContentTool.dll</EngeniousContentBuilderExe>
 
             <Header>/configuration:$(Configuration) /outputDir:&quot;$(ParentOutputDir)&quot; /intermediateDir:&quot;$(ParentIntermediateDir)&quot; /projectDir:&quot;$(ProjectDir)/&quot; /hidden:true</Header>
 
-            <MonoExe Condition=" '$(OS)' != 'Windows_NT' And Exists ('/Library/Frameworks/Mono.framework/Versions/Current/bin/mono') ">/Library/Frameworks/Mono.framework/Versions/Current/bin/mono</MonoExe>
-            <MonoExe Condition=" '$(OS)' != 'Windows_NT' And Exists ('/usr/local/bin/mono') ">/usr/local/bin/mono</MonoExe>
-            <MonoExe Condition=" '$(OS)' != 'Windows_NT' And Exists ('/usr/bin/mono') ">/usr/bin/mono</MonoExe>
-            <MonoExe Condition=" '$(OS)' != 'Windows_NT' And '$(MonoExe)' == '' ">mono</MonoExe>
+            <DotnetExe>dotnet</DotnetExe>
         </PropertyGroup>
 
         <MakeDir Directories="$(ParentIntermediateDir)"/>
         <MakeDir Directories="$(ParentOutputDir)"/>
-
+        <ItemGroup>
+            <AdditionalFiles Include="@(EngeniousContentReference)" SourceItemGroup="EngeniousContentReference"/>
+            <EngeniousObjFolders Include="%(ContentReferences.RootDir)%(ContentReferences.Directory)obj" />
+        </ItemGroup>
+        <XmlPeek XmlInputPath="%(ContentReferences.FullPath)" Query="//Content/Configuration/text()">
+            <Output TaskParameter="Result" PropertyName="EngeniousProjectConfiguration" />
+        </XmlPeek>
+        <XmlPeek XmlInputPath="%(ContentReferences.FullPath)" Query="//Content/Name/text()">
+            <Output TaskParameter="Result" PropertyName="EngeniousProjectName" />
+        </XmlPeek>
+        <ItemGroup>
+            <AdditionalFiles Include="%(EngeniousObjFolders.Identity)/$(EngeniousProjectConfiguration)/$(EngeniousProjectName).CreatedContent.dat" />
+        </ItemGroup>
     </Target>
 
+
+
     <PropertyGroup>
+        <CoreBuildDependsOn>
+            $(CoreBuildDependsOn);
+            BuildEngeniousContent;
+        </CoreBuildDependsOn>
         <CleanDependsOn>
             $(CleanDependsOn);
-            CleanContent;
+            CleanEngeniousContent;
         </CleanDependsOn>
         <RebuildDependsOn>
             $(RebuildDependsOn);
-            RebuildContent;
+            RebuildEngeniousContent;
         </RebuildDependsOn>
     </PropertyGroup>
 
-    <Target Name="BuildContent"
-            BeforeTargets="BeforeBuild;PreBuildEvent"
-            DependsOnTargets="Prepare">
 
+    <Target Name="BuildEngeniousContent"
+        BeforeTargets="BeforeBuild;PreBuildEvent"
+        DependsOnTargets="PrepareEngeniousContent">
 
-        <!--<Exec Command="chmod +x &quot;$(EngeniousContentBuilderExe)&quot;" Condition=" '$(OS)' == 'Unix' " />-->
-        <Exec Command="$(MonoExe) &quot;$(EngeniousContentBuilderExe)&quot; /@:&quot;%(ContentReferences.FullPath)&quot; $(Header)"
-              WorkingDirectory="%(ContentReferences.RootDir)%(ContentReferences.Directory)" Condition="Exists('%(ContentReferences.FullPath)')"/>
-        <Exec Command="$(MonoExe) &quot;$(EngeniousContentBuilderExe)&quot; /@:&quot;%(ContentReferences.FullPath)&quot; $(Header) /readProperty:Name"
-              WorkingDirectory="%(ContentReferences.RootDir)%(ContentReferences.Directory)" ConsoleToMSBuild="true">
-            <Output TaskParameter="ConsoleOutput" PropertyName="EngeniousContentProjectName"/>
-        </Exec>
+        <Exec Command="$(DotnetExe) &quot;$(EngeniousContentBuilderExe)&quot; /@:&quot;%(ContentReferences.FullPath)&quot; $(Header)"
+            WorkingDirectory="%(ContentReferences.RootDir)%(ContentReferences.Directory)" Condition="Exists('%(ContentReferences.FullPath)')"/>
+
         <ItemGroup>
-            <Reference Include="engenious.CreatedContent.$(EngeniousContentProjectName).dll">
-                <HintPath>%(ContentReferences.RelativeDir)engenious.CreatedContent.$(EngeniousContentProjectName).dll</HintPath>
-            </Reference>
-        </ItemGroup>
-        <ItemGroup>
+
             <ExtraContent Include="$(ParentOutputDir)\**\*.*"/>
         </ItemGroup>
         <Copy SourceFiles="@(ExtraContent)" DestinationFolder="$(ProjectDir)\$(OutputPath)\Content\%(RecursiveDir)" SkipUnchangedFiles="true"/>
     </Target>
-    <Target Name="CleanContent" BeforeTargets="BeforeClean;Clean" DependsOnTargets="Prepare">
-        <Exec Command="$(MonoExe) &quot;$(EngeniousContentBuilderExe)&quot; /@:&quot;%(ContentReferences.FullPath)&quot; $(Header) /clean"
-              WorkingDirectory="%(ContentReferences.RootDir)%(ContentReferences.Directory)" Condition="Exists('%(ContentReferences.FullPath)')"/>
+    <Target Name="CleanEngeniousContent" BeforeTargets="BeforeClean;Clean" DependsOnTargets="PrepareEngeniousContent">
+        <Exec Command="$(DotnetExe) &quot;$(EngeniousContentBuilderExe)&quot; /@:&quot;%(ContentReferences.FullPath)&quot; $(Header) /clean"
+            WorkingDirectory="%(ContentReferences.RootDir)%(ContentReferences.Directory)" Condition="Exists('%(ContentReferences.FullPath)')"/>
     </Target>
-    <Target Name="RebuildContent" BeforeTargets="BeforeRebuild;Rebuild" DependsOnTargets="Prepare">
-        <Exec Command="$(MonoExe) &quot;$(EngeniousContentBuilderExe)&quot; /@:&quot;%(ContentReferences.FullPath)&quot; $(Header) /rebuild"
-              WorkingDirectory="%(ContentReferences.RootDir)%(ContentReferences.Directory)" Condition="Exists('%(ContentReferences.FullPath)')"/>
+    <Target Name="RebuildEngeniousContent" BeforeTargets="BeforeRebuild;Rebuild" DependsOnTargets="PrepareEngeniousContent">
+        <Exec Command="$(DotnetExe) &quot;$(EngeniousContentBuilderExe)&quot; /@:&quot;%(ContentReferences.FullPath)&quot; $(Header) /rebuild"
+            WorkingDirectory="%(ContentReferences.RootDir)%(ContentReferences.Directory)" Condition="Exists('%(ContentReferences.FullPath)')"/>
     </Target>
 </Project>
+

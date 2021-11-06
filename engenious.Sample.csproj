@@ -1,21 +1,47 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net461</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <OutputType>Exe</OutputType>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+        <CompilerGeneratedFilesOutputPath>$(MSBuildThisFileDirectory)\Generated</CompilerGeneratedFilesOutputPath>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\engenious\engenious.csproj" Condition="Exists('..\engenious\engenious.csproj')"/>
+<!--        <PackageReference Include="engenious.ContentTool.SourceGen" Version="1.0.0" />-->
+        <ProjectReference Include="..\engenious\engenious.csproj" Condition="Exists('..\engenious\engenious.csproj')" />
         
-        <PackageReference Include="engenious" Version="*" Condition="!Exists('..\engenious\engenious.csproj')"/>
+        <PackageReference Include="engenious" Version="*" Condition="!Exists('..\engenious\engenious.csproj')" />
 
-        <ProjectReference Include="..\engenious.ContentTool\engenious.ContentTool.csproj" Condition="Exists('..\engenious.ContentTool\engenious.ContentTool.csproj')" PrivateAssets="all"/>
-        <PackageReference Include="engenious.ContentTool" Version="*" Condition="!Exists('..\engenious.ContentTool\engenious.ContentTool.csproj')"/>
+        <ProjectReference Include="..\engenious.ContentTool\engenious.ContentTool\engenious.ContentTool.csproj" Condition="Exists('..\engenious.ContentTool\engenious.ContentTool\engenious.ContentTool.csproj')" PrivateAssets="all" />
+        <PackageReference Include="engenious.ContentTool" Version="*" Condition="!Exists('..\engenious.ContentTool\engenious.ContentTool\engenious.ContentTool.csproj')" />
+
+    <ProjectReference Include="..\engenious.ContentTool\engenious.ContentTool.SourceGen\engenious.ContentTool.SourceGen.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+
     </ItemGroup>
     <ItemGroup>
-        <Compile Remove="Content\simple\simple.cs"/>
-        <None Include="Content\simple\simple.cs"/>
-        <EngeniousContentReference Include="Content\Content.ecp"/>
+        <Compile Remove="Content\simple\simple.cs" />
+        <None Include="Content\simple\simple.cs" />
+        <EngeniousContentReference Include="Content\Content.ecp" />
     </ItemGroup>
-    <Import Project="targets\engenious.VERSION\build\engenious.targets" Condition="Exists('..\engenious.ContentTool\engenious.ContentTool.csproj')"/>
+    <ItemGroup>
+      <None Remove="test.txt" />
+      <EmbeddedResource Include="test.ego" />
+      <None Remove="Assets\secondasset.txt" />
+      <EmbeddedResource Include="Assets\secondasset.ego" />
+      <None Remove="Assets\bla.txt" />
+      <EmbeddedResource Include="Assets\bla.txt" />
+
+        <Compile Remove="Generated\**" />
+    </ItemGroup>
+    <Import Project="targets\engenious.VERSION\build\engenious.targets" Condition="Exists('..\engenious.ContentTool\engenious.ContentTool\engenious.ContentTool.csproj')" />
+
+<!--    <Target Name="AlwaysClean" BeforeTargets="Build">-->
+<!--        <CallTarget Targets="Clean" />-->
+<!--    </Target>-->
 </Project>

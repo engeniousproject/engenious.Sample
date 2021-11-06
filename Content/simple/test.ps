@@ -1,0 +1,19 @@
+#version 330
+
+struct test
+{
+    vec3 a;
+    vec3 b;
+};
+
+uniform test x[2];
+
+in vec3 Normal;
+in vec2 TexCoords;
+in vec3 WorldPos;
+
+out vec4 outColor;
+
+void main() {
+    outColor = vec4(x[0].a + x[1].b + x[1].a, 1.0);
+}

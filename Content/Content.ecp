@@ -2,7 +2,7 @@
 <Content>
   <Name>Sample</Name>
   <Configuration>Debug</Configuration>
-  <OutputDir>bin/$(Configuration)</OutputDir>
+  <OutputDir>bin/{Configuration}</OutputDir>
   <Contents>
     <ContentFile>
       <Name>brick.jpg</Name>
@@ -18,6 +18,13 @@
       <Name>test.spritefont</Name>
       <Processor>SpriteFontProcessor</Processor>
       <Importer>SpriteFontImporter</Importer>
+      <Settings />
+    </ContentFile>
+    <ContentFile>
+      <Name>testBitmap.spritefont</Name>
+      <Processor>SpriteFontProcessor</Processor>
+      <Importer>SpriteFontImporter</Importer>
+      <Settings />
     </ContentFile>
     <ContentFile>
       <Name>simple.glsl</Name>
@@ -35,5 +42,55 @@
         <OutputFormat>0</OutputFormat>
       </Settings>
     </ContentFile>
+    <ContentFile>
+      <Name>sphere.glb</Name>
+      <Processor>ModelProcessor</Processor>
+      <Importer>Model Importer</Importer>
+      <Settings>
+        <Scale>
+          <X>1</X>
+          <Y>1</Y>
+          <Z>1</Z>
+        </Scale>
+        <Translate>
+          <X>0</X>
+          <Y>0</Y>
+          <Z>0</Z>
+        </Translate>
+        <Rotation>
+          <X>0</X>
+          <Y>0</Y>
+          <Z>0</Z>
+        </Rotation>
+        <TransformMesh>True</TransformMesh>
+      </Settings>
+    </ContentFile>
+    <ContentFile>
+      <Name>wauzi.glb</Name>
+      <Processor>ModelProcessor</Processor>
+      <Importer>Model Importer</Importer>
+      <Settings>
+        <Scale>
+          <X>1</X>
+          <Y>1</Y>
+          <Z>1</Z>
+        </Scale>
+        <Translate>
+          <X>0</X>
+          <Y>0</Y>
+          <Z>0</Z>
+        </Translate>
+        <Rotation>
+          <X>0</X>
+          <Y>0</Y>
+          <Z>0</Z>
+        </Rotation>
+        <TransformMesh>True</TransformMesh>
+      </Settings>
+    </ContentFile>
+    <ContentFolder>
+      <Name>asdf</Name>
+      <Contents />
+    </ContentFolder>
   </Contents>
 </Content>
