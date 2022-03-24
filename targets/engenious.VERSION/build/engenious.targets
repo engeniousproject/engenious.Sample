@@ -21,20 +21,18 @@
         <PropertyGroup>
             <ContentRootDirectory>Content</ContentRootDirectory>
         </PropertyGroup>
-        <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-            <ParentOutputDir>$(ProjectDir)$(ContentRootDirectory)\bin\Debug</ParentOutputDir>
-            <ParentIntermediateDir>$(ProjectDir)$(ContentRootDirectory)\obj\Debug</ParentIntermediateDir>
-        </PropertyGroup>
-        <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-            <ParentOutputDir>$(ProjectDir)$(ContentRootDirectory)\bin\Release</ParentOutputDir>
-            <ParentIntermediateDir>$(ProjectDir)$(ContentRootDirectory)\obj\Release</ParentIntermediateDir>
-        </PropertyGroup>
+	    <PropertyGroup Condition="'$(Configuration)' != ''">
+		    <ParentOutputDir>$(ProjectDir)$(ContentRootDirectory)\bin\$(Configuration)</ParentOutputDir>
+		    <ParentIntermediateDir>$(ProjectDir)$(ContentRootDirectory)\obj\$(Configuration)</ParentIntermediateDir>
+	    </PropertyGroup>
         <PropertyGroup>
 
             <ContentRootDirectory>Content</ContentRootDirectory>
 
 
             <EngeniousContentBuilderExe Condition="'$(EngeniousContentBuilderExe)' == ''">$(MSBuildThisFileDirectory)..\..\..\..\engenious.ContentTool\bin\$(Configuration)\$(TargetFramework)\engenious.ContentTool.dll</EngeniousContentBuilderExe>
+
+            <EngeniousProjectConfiguration>$(Configuration)</EngeniousProjectConfiguration>
 
             <Header>/configuration:$(Configuration) /outputDir:&quot;$(ParentOutputDir)&quot; /intermediateDir:&quot;$(ParentIntermediateDir)&quot; /projectDir:&quot;$(ProjectDir)/&quot; /hidden:true</Header>
 
@@ -44,17 +42,17 @@
         <MakeDir Directories="$(ParentIntermediateDir)"/>
         <MakeDir Directories="$(ParentOutputDir)"/>
         <ItemGroup>
-            <AdditionalFiles Include="@(EngeniousContentReference)" SourceItemGroup="EngeniousContentReference"/>
-            <EngeniousObjFolders Include="%(ContentReferences.RootDir)%(ContentReferences.Directory)obj" />
+          <AdditionalFiles Include="@(EngeniousContentReference)" SourceItemGroup="EngeniousContentReference" />
+          <EngeniousObjFolders Include="%(ContentReferences.RootDir)%(ContentReferences.Directory)obj" />
         </ItemGroup>
-        <XmlPeek XmlInputPath="%(ContentReferences.FullPath)" Query="//Content/Configuration/text()">
-            <Output TaskParameter="Result" PropertyName="EngeniousProjectConfiguration" />
+        <XmlPeek XmlInputPath="%(ContentReferences.FullPath)" Query="//Content/Configuration/text()" Condition="'$(EngeniousProjectConfiguration)'==''">
+          <Output TaskParameter="Result" PropertyName="EngeniousProjectConfiguration" />
         </XmlPeek>
         <XmlPeek XmlInputPath="%(ContentReferences.FullPath)" Query="//Content/Name/text()">
-            <Output TaskParameter="Result" PropertyName="EngeniousProjectName" />
+          <Output TaskParameter="Result" PropertyName="EngeniousProjectName" />
         </XmlPeek>
         <ItemGroup>
-            <AdditionalFiles Include="%(EngeniousObjFolders.Identity)/$(EngeniousProjectConfiguration)/$(EngeniousProjectName).CreatedContent.dat" />
+          <AdditionalFiles Include="%(EngeniousObjFolders.Identity)/$(EngeniousProjectConfiguration)/$(EngeniousProjectName).CreatedCode.dat" SourceItemGroup="EngeniousContentData" />
         </ItemGroup>
     </Target>
 
@@ -84,10 +82,9 @@
             WorkingDirectory="%(ContentReferences.RootDir)%(ContentReferences.Directory)" Condition="Exists('%(ContentReferences.FullPath)')"/>
 
         <ItemGroup>
-
-            <ExtraContent Include="$(ParentOutputDir)\**\*.*"/>
+          <ExtraContent Include="$(ParentOutputDir)\**\*.*" />
+	      <None Include="@(ExtraContent->'%(Identity)')" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" Visible="false" Link="$(ContentRootDirectory)\$([MSBuild]::MakeRelative($(ParentOutputDir), %(ExtraContent.Identity)))" />
         </ItemGroup>
-        <Copy SourceFiles="@(ExtraContent)" DestinationFolder="$(ProjectDir)\$(OutputPath)\Content\%(RecursiveDir)" SkipUnchangedFiles="true"/>
     </Target>
     <Target Name="CleanEngeniousContent" BeforeTargets="BeforeClean;Clean" DependsOnTargets="PrepareEngeniousContent">
         <Exec Command="$(DotnetExe) &quot;$(EngeniousContentBuilderExe)&quot; /@:&quot;%(ContentReferences.FullPath)&quot; $(Header) /clean"

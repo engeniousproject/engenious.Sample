@@ -58,7 +58,7 @@ namespace Sample
             simpleMat.Albedo = _texture;
             simpleMat.Metallic = 0.0f;
             simpleMat.Roughness = 0.2f;
-            simpleMat.AmbientOcclusion = 1f;
+            simpleMat.AmbientOcclusion = new Vector3(1f);
         }
 
         public override void LoadContent()
@@ -155,7 +155,7 @@ namespace Sample
             var view =  Matrix.CreateLookAt(new Vector3(rotated.X, rotated.Y, rotated.Z), Vector3.Zero, Vector3.UnitY);
             var projection = Matrix.CreatePerspectiveFieldOfView(MathF.PI / 2,
                 (float)GraphicsDevice.Viewport.Width / GraphicsDevice.Viewport.Height, 0.1f, 100f);
-            _effect.ViewProj = projection*view;
+            _effect.Ambient.ViewProj = projection*view;
 
             _effect.Ambient.Pass1.camPos = new Vector3(rotated.X, rotated.Y, rotated.Z);
             //simpleMat.Roughness = MathF.Sin((float)gameTime.TotalGameTime.TotalSeconds) / 2 + 0.5f;

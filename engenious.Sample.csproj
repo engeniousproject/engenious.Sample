@@ -19,9 +19,10 @@
         <PackageReference Include="engenious" Version="*" Condition="!Exists('..\engenious\engenious.csproj')" />
 
         <ProjectReference Include="..\engenious.ContentTool\engenious.ContentTool\engenious.ContentTool.csproj" Condition="Exists('..\engenious.ContentTool\engenious.ContentTool\engenious.ContentTool.csproj')" PrivateAssets="all" />
-        <PackageReference Include="engenious.ContentTool" Version="*" Condition="!Exists('..\engenious.ContentTool\engenious.ContentTool\engenious.ContentTool.csproj')" />
+        <PackageReference Include="engenious.ContentTool" Version="0.6.1.4-alpha" Condition="!Exists('..\engenious.ContentTool\engenious.ContentTool\engenious.ContentTool.csproj')" />
 
-    <ProjectReference Include="..\engenious.ContentTool\engenious.ContentTool.SourceGen\engenious.ContentTool.SourceGen.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+        <ProjectReference Include="..\engenious.ContentTool\engenious.ContentTool.SourceGen\engenious.ContentTool.SourceGen.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" Condition="Exists('..\engenious.ContentTool\engenious.ContentTool.SourceGen\engenious.ContentTool.SourceGen.csproj')" />
+        <PackageReference Include="engenious.ContentTool.SourceGen" Version="0.6.1.4-alpha" Condition="!Exists('..\engenious.ContentTool\engenious.ContentTool.SourceGen\engenious.ContentTool.SourceGen.csproj')" />
 
     </ItemGroup>
     <ItemGroup>
@@ -37,7 +38,8 @@
       <None Remove="Assets\bla.txt" />
       <EmbeddedResource Include="Assets\bla.txt" />
 
-        <Compile Remove="Generated\**" />
+      <Compile Remove="Generated\**" />
+      <None Include="Generated\**" />
     </ItemGroup>
     <Import Project="targets\engenious.VERSION\build\engenious.targets" Condition="Exists('..\engenious.ContentTool\engenious.ContentTool\engenious.ContentTool.csproj')" />
 

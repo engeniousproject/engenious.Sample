@@ -1,19 +1,16 @@
-﻿using engenious;
+﻿using System.ComponentModel;
+using engenious;
 using engenious.Graphics;
 using engenious.UserDefined;
 
-namespace Sample
+namespace engenious.UserDefined
 {
-    public class TestShader : simple, IModelEffect
+    public partial class simple : IModelEffect
     {
         private Texture _texture;
-        private Matrix _world;
         private Matrix _view;
+        private Matrix _world;
         private Matrix _projection;
-
-        public TestShader(GraphicsDevice graphicsDevice) : base(graphicsDevice)
-        {
-        }
 
         public Matrix Projection
         {
@@ -40,8 +37,8 @@ namespace Sample
             get { return _world; }
             set
             {
-                _world = value; 
-                UpdateMatrix();
+                _world = value;
+                Ambient.World = value;
             }
         }
 
@@ -56,7 +53,8 @@ namespace Sample
 
         private void UpdateMatrix()
         {
-            base.Ambient.Pass1.WorldViewProj = Projection * View * World;
+            Ambient.Pass1.World = World;
+            Ambient.ViewProj = Projection * View;
         }
     }
 }
