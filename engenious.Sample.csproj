@@ -16,7 +16,7 @@
 <!--        <PackageReference Include="engenious.ContentTool.SourceGen" Version="1.0.0" />-->
         <ProjectReference Include="..\engenious\engenious.csproj" Condition="Exists('..\engenious\engenious.csproj')" />
         
-        <PackageReference Include="engenious" Version="*" Condition="!Exists('..\engenious\engenious.csproj')" />
+        <PackageReference Include="engenious" Version="0.6.0.7-alpha" Condition="!Exists('..\engenious\engenious.csproj')" />
 
         <ProjectReference Include="..\engenious.ContentTool\engenious.ContentTool\engenious.ContentTool.csproj" Condition="Exists('..\engenious.ContentTool\engenious.ContentTool\engenious.ContentTool.csproj')" PrivateAssets="all" />
         <PackageReference Include="engenious.ContentTool" Version="0.6.1.4-alpha" Condition="!Exists('..\engenious.ContentTool\engenious.ContentTool\engenious.ContentTool.csproj')" />
